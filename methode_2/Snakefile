@@ -1,0 +1,39 @@
+
+##snakefile for training the shadow models
+
+
+configfile: "configSnakemake.yaml"
+import os
+
+
+rule trainShadowModel:
+     input:
+         os.path.join("scripts", "shadow_config.py")
+     output:
+         directory(os.path.join("data","shadowTrainResultsLast"))
+     conda:
+         "envs/dopel.yaml"
+     script:
+         os.path.join("scripts", "trainAllShadow.py")
+
+
+rule generateDataShadow:
+	input:
+		rules.trainShadowModel.output
+	output:
+		os.path.join("data",".time")
+	conda:
+		"envs/dopel.yaml"
+	script:
+		os.path.join("scripts","testAllShadow.py")	
+
+
+rule all:
+    input:
+        rules.trainShadowModel.output,
+        rules.generateDataShadow.output,
+
+
+
+
+
